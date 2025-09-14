@@ -24,4 +24,4 @@ $ErrorActionPreference = "Stop"
 
 $cwd = (Get-Location).Path.Replace("\", "/");
 $wslPath = "$(wsl wslpath $cwd)";
-wsl bash -c "cd $wslPath && ./scripts/_build-game.sh --release --mac";
+wsl bash -c "cd $wslPath && ./scripts/_build-game.sh --web";

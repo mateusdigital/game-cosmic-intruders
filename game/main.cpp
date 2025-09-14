@@ -33,10 +33,10 @@ int main(int argv, char** args)
     //
     // Window and Design Sizes.
     constexpr auto kDesignWidth  = 800;
-    constexpr auto kDesignHeight = 730;
+    constexpr auto kDesignHeight = 800;
 
-    constexpr auto kWindowWidth  = kDesignWidth  * 0.9f;
-    constexpr auto kWindowHeight = kDesignHeight * 0.9f;
+    constexpr auto kWindowWidth  = kDesignWidth  * 1.0f;
+    constexpr auto kWindowHeight = kDesignHeight * 1.0f;
 
     //
     // Init

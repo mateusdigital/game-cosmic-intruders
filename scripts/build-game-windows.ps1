@@ -25,23 +25,25 @@
 $ErrorActionPreference = "Stop"
 
 ## -----------------------------------------------------------------------------
-$OUTPUT_DIR_PATH = "./build/windows-release";
-$BUMP_VERSION    = "./thirdparty/bump-version-win.exe";
-
+$OUTPUT_DIR_PATH = "./_build/windows-release";
 ## -----------------------------------------------------------------------------
 if(-not $env:MINGW_BIN) {
-    $_MINGW_BIN = "./thirdparty/MinGW/bin";
-    Write-Host "MINGW_BIN not set, using default: $_MINGW_BIN";
+  $_MINGW_BIN = "./thirdparty/MinGW/bin";
+  Write-Host "MINGW_BIN not set, using default: $_MINGW_BIN";
 } else {
-    $_MINGW_BIN = $env:MINGW_BIN;
-    Write-Host "MINGW_BIN set to: $_MINGW_BIN";
+  $_MINGW_BIN = $env:MINGW_BIN;
+  Write-Host "MINGW_BIN set to: $_MINGW_BIN";
 }
 
 $env:Path = "${_MINGW_BIN};${env:Path}";
 
 ## -----------------------------------------------------------------------------
-& $BUMP_VERSION --build;
-$GAME_VERSION = (& $BUMP_VERSION --show-version-full);
+
+## --- Game version ----------------------------------------------------------
+$GAME_VERSION  = $PACKAGE_JSON.version;
+$BUILD_VERSION = $PACKAGE_JSON.build;
+$FULL_GAME_VERSION = "$GAME_VERSION($BUILD_VERSION)";
+
 
 Write-Host "==> Building for Windows";
 Write-Host "GAME VERSION: ${GAME_VERSION}";
@@ -49,48 +51,48 @@ Write-Host "GAME VERSION: ${GAME_VERSION}";
 
 ## -----------------------------------------------------------------------------
 if (Test-Path "$OUTPUT_DIR_PATH") {
-    Remove-Item "$OUTPUT_DIR_PATH" -Recurse -Force;
+  Remove-Item "$OUTPUT_DIR_PATH" -Recurse -Force;
 }
 New-Item "$OUTPUT_DIR_PATH" -Type Directory -Force;
 
 ## -----------------------------------------------------------------------------
 $ALL_SOURCES = Get-ChildItem  `
-    -Filter *.cpp -Recurse -ErrorAction SilentlyContinue -Force `
-    -Path "./game", "./lib"
+  -Filter *.cpp -Recurse -ErrorAction SilentlyContinue -Force `
+  -Path "./game", "./lib"
 
 
-g++.exe --verbose                                                             `
-    $ALL_SOURCES                                                              `
-    -O3 -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wfloat-equal          `
-    -std=c++14                                                                `
-                                                                              `
-    -I./lib/SDL2-devel-2.26.5-mingw/i686-w64-mingw32/include/SDL2             `
-    -I./lib/SDL2_image-2.6.3-mingw/i686-w64-mingw32/include/SDL2              `
-    -I./lib/SDL2_mixer-2.6.3-mingw/i686-w64-mingw32/include/SDL2              `
-    -I./lib/SDL2_ttf-2.20.2-mingw/i686-w64-mingw32/include/SDL2               `
-                                                                              `
-    -I./lib                                                                   `
-    -I./lib/Cooper                                                            `
-    -I./lib/Cooper/Cooper                                                     `
-    -I./game                                                                  `
-                                                                              `
-    -L./lib/SDL2-devel-2.26.5-mingw/i686-w64-mingw32/lib                      `
-    -L./lib/SDL2_image-2.6.3-mingw/i686-w64-mingw32/lib                       `
-    -L./lib/SDL2_mixer-2.6.3-mingw/i686-w64-mingw32/lib                       `
-    -L./lib/SDL2_ttf-2.20.2-mingw/i686-w64-mingw32/lib                        `
-                                                                              `
-    -lmingw32                                                                 `
-    -mwindows                                                                 `
-                                                                              `
-    -lSDL2main                                                                `
-    -lSDL2                                                                    `
-    -lSDL2_mixer                                                              `
-    -lSDL2_ttf                                                                `
-    -lSDL2_image                                                              `
-                                                                              `
-    -DGAME_VERSION="`"${GAME_VERSION}`""                                      `
-    -o cosmic-intruders                                                       `
-    ;
+g++.exe --verbose                                                           `
+  $ALL_SOURCES                                                              `
+  -O3 -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wfloat-equal          `
+  -std=c++14                                                                `
+                                                                            `
+  -I./lib/SDL2-devel-2.26.5-mingw/i686-w64-mingw32/include/SDL2             `
+  -I./lib/SDL2_image-2.6.3-mingw/i686-w64-mingw32/include/SDL2              `
+  -I./lib/SDL2_mixer-2.6.3-mingw/i686-w64-mingw32/include/SDL2              `
+  -I./lib/SDL2_ttf-2.20.2-mingw/i686-w64-mingw32/include/SDL2               `
+                                                                            `
+  -I./lib                                                                   `
+  -I./lib/Cooper                                                            `
+  -I./lib/Cooper/Cooper                                                     `
+  -I./game                                                                  `
+                                                                            `
+  -L./lib/SDL2-devel-2.26.5-mingw/i686-w64-mingw32/lib                      `
+  -L./lib/SDL2_image-2.6.3-mingw/i686-w64-mingw32/lib                       `
+  -L./lib/SDL2_mixer-2.6.3-mingw/i686-w64-mingw32/lib                       `
+  -L./lib/SDL2_ttf-2.20.2-mingw/i686-w64-mingw32/lib                        `
+                                                                            `
+  -lmingw32                                                                 `
+  -mwindows                                                                 `
+                                                                            `
+  -lSDL2main                                                                `
+  -lSDL2                                                                    `
+  -lSDL2_mixer                                                              `
+  -lSDL2_ttf                                                                `
+  -lSDL2_image                                                              `
+                                                                            `
+  -DGAME_VERSION="`"${GAME_VERSION}`""                                      `
+  -o cosmic-intruders                                                       `
+  ;
 
 ##------------------------------------------------------------------------------
 Copy-Item (Get-ChildItem -Path ./lib/SDL2-devel-2.26.5-mingw/i686-w64-mingw32/  -Filter *.dll -Recurse -ErrorAction SilentlyContinue -Force) $OUTPUT_DIR_PATH

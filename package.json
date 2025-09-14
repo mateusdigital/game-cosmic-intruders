@@ -2,7 +2,7 @@
  "name": "cosmic-intruders",
  "description": "Cosmic Intruders is a retro-style arcade shooter built with love by mateus.digital. ",
  "version": "2.2.0",
- "build": 45,
+ "build": 49,
  "repository": {
   "type": "git",
   "url": "https://github.com/mateusdigital/cosmic_intruders.git"
